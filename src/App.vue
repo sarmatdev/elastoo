@@ -1,56 +1,52 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <h1>DevExtreme Chart</h1>
     </v-app-bar>
-
     <v-content>
-      <HelloWorld />
+      <v-row align="center" justify="center">
+        <v-col cols="10">
+          <Modal />
+        </v-col>
+      </v-row>
+      <v-row align="center" justify="center">
+        <v-col cols="10" v-for="(chart, index) in charts" :key="index">
+          <v-card class="elevation-10">
+            <v-card-text>
+              <PieChart :data="chart.data" v-if="chart.type === 'Pie'" />
+              <LineChart :data="chart.data" v-else-if="chart.type === 'Line'" />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-content>
+    <Loader :loading="loading" />
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
-
+import LineChart from './components/LineChart';
+import PieChart from './components/PieChart';
+import Modal from './components/Modal';
+import Loader from './components/Loader';
 export default {
-  name: "App",
-
+  name: 'App',
   components: {
-    HelloWorld
+    PieChart,
+    LineChart,
+    Modal,
+    Loader
   },
-
-  data: () => ({
-    //
-  })
+  computed: {
+    charts() {
+      return this.$store.getters.charts;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    }
+  },
+  beforeDestroy() {
+    this.$store.commit('deleteCharts');
+  }
 };
 </script>
